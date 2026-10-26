@@ -18,9 +18,16 @@ http.createServer((req, res) => {
   console.log(`[Health Server] Listening on port ${port}`);
 });
 
-if (!process.env.DISCORD_TOKEN) {
-  console.error('Error: DISCORD_TOKEN is not defined in your .env file!');
+let token = process.env.DISCORD_TOKEN;
+if (token) {
+  token = token.trim().replace(/^['"]|['"]$/g, '');
+}
+
+if (!token) {
+  console.error('[Discord Error] DISCORD_TOKEN is missing or empty! Make sure you set DISCORD_TOKEN in Render Environment Variables.');
   process.exit(1);
+} else {
+  console.log(`[Discord] Loaded DISCORD_TOKEN (${token.length} chars)`);
 }
 
 // --- 24/7 Mode Settings Storage & Management ---
@@ -559,4 +566,9 @@ process.on('uncaughtException', (error) => {
 });
 
 // Log in to Discord
-client.login(process.env.DISCORD_TOKEN);
+console.log('[Discord] Attempting to log in with token...');
+client.login(token).then(() => {
+  console.log('[Discord] client.login() promise resolved successfully');
+}).catch((err) => {
+  console.error('[Discord Error] client.login() failed to connect:', err);
+});
