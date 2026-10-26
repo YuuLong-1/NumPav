@@ -94,6 +94,10 @@ const client = new Client({
   ],
 });
 
+client.on('debug', (info) => console.log('[Discord Debug]', info));
+client.on('error', (err) => console.error('[Discord Client Error]', err));
+client.rest.on('rateLimited', (info) => console.warn('[Discord RateLimit]', info));
+
 // Initialize DisTube for audio streaming with YouTube support
 const distube = new DisTube(client, {
   emitNewSongOnly: true,
