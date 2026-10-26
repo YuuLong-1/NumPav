@@ -3,10 +3,20 @@ import { DisTube } from 'distube';
 import { YouTubePlugin } from '@distube/youtube';
 import ffmpeg from 'ffmpeg-static';
 import dotenv from 'dotenv';
+import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 
 dotenv.config();
+
+// Web health-check server for cloud hosts (Render, Koyeb, etc.)
+const port = process.env.PORT || 3000;
+http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Discord bot is running 24/7!');
+}).listen(port, () => {
+  console.log(`[Health Server] Listening on port ${port}`);
+});
 
 if (!process.env.DISCORD_TOKEN) {
   console.error('Error: DISCORD_TOKEN is not defined in your .env file!');
